@@ -1,4 +1,6 @@
 import {
+  BadRequestException,
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -24,6 +26,9 @@ export class AuthService {
   async signIn(data: SignInDto) {
     try {
       let { email, password } = data;
+      if (!email || !password) {
+        throw new BadRequestException('Please provide email and password');
+      }
       let user = await this.usersRepository.findOne({ where: { email } });
       if (!user) throw new NotFoundException('User Not Found, please sign up');
       const isMatch = await bcrypt.compare(password, user.password);
@@ -34,24 +39,33 @@ export class AuthService {
       };
     } catch (error) {
       console.log(error);
+      // throw new Error(error);
     }
   }
 
   async signUp(data: SignUpDto) {
     try {
       let { email, password, firstName, lastName } = data;
-      let user = this.usersRepository.findOne({ where: { email } });
-      if (user) throw new NotFoundException('User Found, please sign in');
+      if (!email || !password || !firstName || !lastName) {
+        throw new BadRequestException(
+          'Please provide firstName, lastName, email and password',
+        );
+      }
+      let user = await this.usersRepository.findOne({ where: { email } });
+      console.log(user);
+      if (user) throw new ConflictException('User Found, please sign in');
       let newUser = new User();
       newUser.email = email;
       newUser.firstName = firstName;
       newUser.lastName = lastName;
-      newUser.password = await bcrypt.hash(password, process.env.BCRYPT_SALT);
+      newUser.password = await bcrypt.hash(
+        password,
+        parseInt(process.env.BCRYPT_SALT),
+      );
       await this.usersRepository.save(newUser);
-      //   newUser.role=
     } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException('Signup failed');
+      // throw Error(error);
     }
   }
 }

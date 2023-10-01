@@ -5,6 +5,10 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
+import { FileModule } from './file/file.module';
+import { User } from './database/enitities/user.entity';
+import { Role } from './database/enitities/role.entity';
+import { File } from './database/enitities/file.entity';
 
 @Module({
   imports: [
@@ -16,7 +20,7 @@ import { ConfigModule } from '@nestjs/config';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: ['src/database/entities/*.ts'],
+      entities: [User, Role, File],
       synchronize: true,
     }),
     JwtModule.register({
@@ -25,8 +29,11 @@ import { ConfigModule } from '@nestjs/config';
       signOptions: { expiresIn: '86400s' },
     }),
     AuthModule,
+    FileModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {}
+}
