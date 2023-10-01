@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Role } from './role.entity';
 import { File } from './file.entity';
@@ -26,8 +27,10 @@ export class User {
   password: string;
 
   @ManyToOne((type) => Role, (role) => role.roleName)
+  @JoinColumn()
   role: Role;
 
   @OneToMany((type) => File, (file) => file.user)
+  @JoinColumn()
   files: File[];
 }

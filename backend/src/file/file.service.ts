@@ -5,6 +5,8 @@ import { File } from 'src/database/enitities/file.entity';
 import { User } from 'src/database/enitities/user.entity';
 import { Repository } from 'typeorm';
 import axios from 'axios';
+import { roles } from 'src/constants/roles';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class FileService {
@@ -13,8 +15,26 @@ export class FileService {
   constructor(
     @InjectRepository(File)
     private filesRepository: Repository<File>,
+    private userService: AuthService,
   ) {
     this.s3 = new AWS.S3();
+  }
+
+  async getAllFiles(user: User): Promise<File[]> {
+    try {
+      let files: File[];
+      if (user.role.roleName == roles.ADMIN)
+        files = await this.filesRepository.find();
+      else
+        files = await this.filesRepository.find({
+          where: { user: { id: user.id } },
+        });
+      if (files.length == 0) return [];
+      return files;
+    } catch (error) {
+      console.log(error);
+      throw new Error(error);
+    }
   }
 
   async getPresignedUploadUrl(
@@ -44,16 +64,14 @@ export class FileService {
       let file = await this.filesRepository.findOne({
         where: {
           name: key,
-          user,
+          user: { id: user.id },
         },
       });
-      if (file) {
-        //TODO
-        //delete prev obj and update
-      } else {
+      let usr = await this.userService.getUser(user.id);
+      if (!file && usr) {
         let newFile = new File();
         newFile.name = key;
-        newFile.user = user;
+        newFile.user = usr;
         await this.filesRepository.save(newFile);
       }
     } catch (error) {
@@ -62,26 +80,21 @@ export class FileService {
     }
   }
 
-  async deleteObject(bucketName: string, objectKey: string): Promise<void> {
+  async deleteObject(
+    bucketName: string,
+    objectKey: string,
+    userId: number,
+  ): Promise<void> {
     try {
       const params: AWS.S3.DeleteObjectRequest = {
         Bucket: bucketName,
         Key: objectKey,
       };
       await this.s3.deleteObject(params).promise();
-    } catch (error) {
-      console.log(error);
-      throw new Error(error);
-    }
-  }
-
-  async getObjects(user: User): Promise<File[]> {
-    try {
-      let files = await this.filesRepository.find({ where: { user } });
-      if (files.length == 0) {
-        throw new NotFoundException('No files found');
-      }
-      return files;
+      let file = await this.filesRepository.findOne({
+        where: { name: objectKey, user: { id: userId } },
+      });
+      if (file) await this.filesRepository.delete(file.id);
     } catch (error) {
       console.log(error);
       throw new Error(error);

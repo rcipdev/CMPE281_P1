@@ -29,11 +29,14 @@ export class AuthService {
       if (!email || !password) {
         throw new BadRequestException('Please provide email and password');
       }
-      let user = await this.usersRepository.findOne({ where: { email } });
+      let user = await this.usersRepository.findOne({
+        where: { email },
+        relations: { role: true },
+      });
       if (!user) throw new NotFoundException('User Not Found, please sign up');
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) throw new UnauthorizedException('Authentication Failed');
-      const payload = { sub: user.id, email: user.email };
+      const payload = { id: user.id, email: user.email, role: user.role };
       return {
         access_token: await this.jwtService.signAsync(payload),
       };
@@ -66,6 +69,16 @@ export class AuthService {
     } catch (error) {
       console.log(error);
       // throw Error(error);
+    }
+  }
+
+  async getUser(id: number): Promise<User> {
+    try {
+      let user = await this.usersRepository.findOne({ where: { id } });
+      if (!user) return null;
+      return user;
+    } catch (error) {
+      throw new Error(error);
     }
   }
 }
