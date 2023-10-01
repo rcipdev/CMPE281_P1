@@ -10,19 +10,19 @@ import {
 } from '@nestjs/common';
 import { FileService } from './file.service';
 import { AuthGuard } from 'src/guard/auth.guard';
-import { DownloadFileDto } from './dto/downloadFile.dto';
+import { AWSConfigDto } from './dto/awsconfig.dto';
 
 @Controller('file')
 export class FileController {
   constructor(private fileService: FileService) {}
 
-  @Get(':bucket/:key')
+  @Post('url')
   @UseGuards(AuthGuard)
-  async getPresignedUploadUrl(
-    @Param('bucket') bucket: string,
-    @Param('key') key: string,
-  ): Promise<string> {
-    return await this.fileService.getPresignedUploadUrl(bucket, key);
+  async getPresignedUploadUrl(@Body() data: AWSConfigDto): Promise<string> {
+    return await this.fileService.getPresignedUploadUrl(
+      data.bucketName,
+      data.key,
+    );
   }
 
   @Post('upload')
@@ -33,7 +33,7 @@ export class FileController {
 
   @Post('download')
   @UseGuards(AuthGuard)
-  async downloadObject(@Body() data: DownloadFileDto): Promise<any> {
+  async downloadObject(@Body() data: AWSConfigDto): Promise<any> {
     return this.fileService.downloadObjects(data.bucketName, data.key);
   }
 
