@@ -37,12 +37,9 @@ export class FileController {
     return this.fileService.downloadObjects(data.bucketName, data.key);
   }
 
-  @Delete('delete/:bucketName/:objectKey')
+  @Delete('delete')
   @UseGuards(AuthGuard)
-  async deleteObject(
-    @Param('bucketName') bucketName: string,
-    @Param('objectKey') objectKey: string,
-  ): Promise<void> {
-    await this.fileService.deleteObject(bucketName, objectKey);
+  async deleteObject(@Body() data: AWSConfigDto): Promise<void> {
+    await this.fileService.deleteObject(data.bucketName, data.key);
   }
 }
