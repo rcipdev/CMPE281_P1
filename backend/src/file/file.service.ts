@@ -105,23 +105,12 @@ export class FileService {
     }
   }
 
-  async downloadObjects(bucketName: string, objectKey: string): Promise<any> {
-    // const params: AWS.S3.GetObjectRequest = {
-    //   Bucket: bucketName,
-    //   Key: objectKey,
-    // };
-
-    // const s3PresignedUrl = await this.s3.getSignedUrlPromise(
-    //   'getObject',
-    //   params,
-    // );
-    const cloudFrontDomain = process.env.CLOUD_FRONT_DOMAIN;
-    const cloudFrontUrl = `https://${cloudFrontDomain}/${bucketName}/${objectKey}`;
-
-    // Use Axios to fetch the file from CloudFront
-    const response = await axios.get(cloudFrontUrl, { responseType: 'stream' });
-
+  async downloadObjects(objectKey: string): Promise<any> {
+    const cloudFrontDomain = process.env.CLOUD_FRONT_ORIGIN;
+    const cloudFrontUrl = `${cloudFrontDomain}/${objectKey}`;
+    const response = await axios.get(cloudFrontUrl, {
+      responseType: 'arraybuffer',
+    });
     return response.data;
-    // return `${cloudFrontUrl}?${s3PresignedUrl.split('?')[1]}`;
   }
 }

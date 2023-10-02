@@ -41,7 +41,7 @@ export class FileController {
   @Post('download')
   @UseGuards(AuthGuard)
   async downloadObject(@Body() data: AWSConfigDto): Promise<any> {
-    return this.fileService.downloadObjects(data.bucketName, data.key);
+    return this.fileService.downloadObjects(data.key);
   }
 
   @Delete('delete')
