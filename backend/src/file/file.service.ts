@@ -17,7 +17,12 @@ export class FileService {
     private filesRepository: Repository<File>,
     private userService: AuthService,
   ) {
-    this.s3 = new AWS.S3();
+    this.s3 = new AWS.S3({
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      region: process.env.AWS_REGION,
+      signatureVersion: 'v4',
+    });
   }
 
   async getAllFiles(user: User): Promise<File[]> {
@@ -45,7 +50,6 @@ export class FileService {
       Bucket: bucketName,
       Key: key,
       Expires: 3600,
-      ContentType: 'application/pdf',
     };
 
     return new Promise((resolve, reject) => {
