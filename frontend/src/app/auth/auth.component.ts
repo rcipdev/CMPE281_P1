@@ -6,6 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -15,7 +16,15 @@ import { Router } from '@angular/router';
 export class AuthComponent {
   loginForm: FormGroup;
 
-  constructor(private router: Router, private fb: FormBuilder) {}
+  constructor(
+    private router: Router,
+    private fb: FormBuilder,
+    private authService: AuthService
+  ) {
+    if (this.authService.getToken()) {
+      this.router.navigate(['home']);
+    }
+  }
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -25,7 +34,14 @@ export class AuthComponent {
   }
 
   login() {
-    const { email, password, fullName } = this.loginForm.value;
-    console.log(email);
+    const { email, password } = this.loginForm.value;
+    this.authService.login({ email, password }).subscribe(
+      (data) => {
+        this.authService.setSession(data.access_token);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 }

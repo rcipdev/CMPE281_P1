@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, Input } from '@angular/core';
 import {
   FormGroup,
   FormBuilder,
@@ -6,6 +7,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../service/auth.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-signup',
@@ -13,9 +16,15 @@ import { Router } from '@angular/router';
   styleUrls: ['./signup.component.css'],
 })
 export class SignupComponent {
+  @Input() flag: boolean = false;
   loginForm: FormGroup;
 
-  constructor(private router: Router, private fb: FormBuilder) {}
+  constructor(
+    private router: Router,
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private toastr: ToastrService
+  ) {}
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -26,8 +35,16 @@ export class SignupComponent {
     });
   }
 
-  login() {
-    const { email, password, fullName } = this.loginForm.value;
-    console.log(email);
+  signup() {
+    const { fname, lname, email, password } = this.loginForm.value;
+    this.authService.signup({ fname, lname, email, password }).subscribe(
+      (data) => {
+        this.toastr.success('Signup Successfull!', 'Please Login!');
+        this.router.navigate(['/']);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 }

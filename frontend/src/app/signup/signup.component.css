@@ -1,34 +1,34 @@
-.login-form-div{
-    min-width: 150px;
-    max-width: 500px;
-    width: 100%;
-    margin: 20px auto; 
-    font-size: 18px;
+.login-form-div {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+  font-size: 18px;
 }
 
-.login-main-card{
-    text-align: center;
-    height: fit-content;
-    width: 100%;
+.login-main-card {
+  text-align: center;
+  height: fit-content;
+  width: 100%;
 }
 
-.email-table,.password-table{
-    width: 100%;
+.email-table,
+.password-table {
+  width: 100%;
 }
 
-.a-class{
-    margin-top: 20px;
-    margin-bottom: 20px;
+.a-class {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
-.example-full-width{
-    border: 0;
-    color: white;
-    padding: 4px;
-    margin: 0;
-    display: inline-block;
+.example-full-width {
+  border: 0;
+  color: white;
+  padding: 4px;
+  margin: 0;
+  display: inline-block;
 }
 
-.loginButton{
-    margin-top: 20px;
+.loginButton {
+  margin-top: 20px;
 }
