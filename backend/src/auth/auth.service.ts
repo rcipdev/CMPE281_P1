@@ -13,12 +13,16 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { SignInDto } from './dto/signin.dto';
 import { SignUpDto } from './dto/signup.dto';
+import { Role } from 'src/database/enitities/role.entity';
+import { roles } from 'src/constants/roles';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Role)
+    private rolesRepository: Repository<Role>,
     private jwtService: JwtService,
   ) {
     //
@@ -55,8 +59,11 @@ export class AuthService {
         );
       }
       let user = await this.usersRepository.findOne({ where: { email } });
-      console.log(user);
+      let role = await this.rolesRepository.findOne({
+        where: { roleName: roles.USER },
+      });
       if (user) throw new ConflictException('User Found, please sign in');
+      if (!role) throw new ConflictException('Role Not Found');
       let newUser = new User();
       newUser.email = email;
       newUser.firstName = firstName;
@@ -65,6 +72,7 @@ export class AuthService {
         password,
         parseInt(process.env.BCRYPT_SALT),
       );
+      newUser.role = role;
       await this.usersRepository.save(newUser);
     } catch (error) {
       console.log(error);
