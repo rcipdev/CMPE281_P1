@@ -21,6 +21,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from './service/auth.service';
 import { TokenInterceptor } from './interceptor/token.interceptor';
 import { ToastrModule } from 'ngx-toastr';
+import { FileService } from './service/file.service';
 
 @NgModule({
   declarations: [AppComponent, AuthComponent, SignupComponent, HomeComponent],
@@ -44,6 +45,7 @@ import { ToastrModule } from 'ngx-toastr';
   ],
   providers: [
     AuthService,
+    FileService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,

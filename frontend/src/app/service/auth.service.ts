@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-// import decode from 'jwt-decode';
-// import { API_URL } from './../app.constants';
 
 @Injectable()
 export class AuthService {
@@ -27,10 +25,10 @@ export class AuthService {
     return this.http.post(`http://localhost:3000/auth/signup`, { ...user });
   }
 
-  //   logout(): void {
-  //     localStorage.removeItem('token');
-  //     this.router.navigate(['login']);
-  //   }
+  logout(): void {
+    localStorage.removeItem('token');
+    this.router.navigate(['/']);
+  }
 
   setSession(token: string): void {
     localStorage.setItem('token', token);
@@ -41,16 +39,14 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  //   isAuthenticated(): boolean {
-  //     const token = this.getToken();
-  //     if (!token) {
-  //       return false;
-  //     }
-  //     let expiryDate = new Date(0);
-  //     const exp = decode(token).exp;
-  //     expiryDate.setUTCSeconds(exp);
-  //     return expiryDate.valueOf() > new Date().valueOf();
-  //   }
+  isAuthenticated(): boolean {
+    const token = this.getToken();
+    if (!token) {
+      return false;
+    }
+    const expiry = JSON.parse(atob(token.split('.')[1])).exp;
+    return Math.floor(new Date().getTime() / 1000) < expiry;
+  }
 
   //   hasRole(role: string): boolean {
   //     const token: any = this.getToken();
