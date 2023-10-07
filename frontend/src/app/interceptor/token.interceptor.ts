@@ -15,13 +15,15 @@ export class TokenInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    let token = this.auth.getToken();
+    if (!token) this.auth.logout();
     if (
-      request.url.indexOf('signup') == 0 ||
-      request.url.indexOf('signin') == 0
+      request.url.indexOf('signup') != 0 ||
+      request.url.indexOf('signin') != 0
     )
       request = request.clone({
         setHeaders: {
-          Authorization: `Bearer ${this.auth.getToken()}`,
+          Authorization: `Bearer ${token}`,
         },
       });
     return next.handle(request);

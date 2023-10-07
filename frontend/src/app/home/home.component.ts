@@ -15,7 +15,9 @@ export class HomeComponent {
       (data) => {
         this.files = data;
       },
-      (error) => {}
+      (error) => {
+        console.log(error);
+      }
     );
   }
 }
