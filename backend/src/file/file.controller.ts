@@ -2,7 +2,6 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
   UseGuards,
   Request,
   Post,
@@ -36,12 +35,6 @@ export class FileController {
   @UseGuards(AuthGuard)
   async uploadObject(@Body() data: AWSConfigDto, @Request() req) {
     return this.fileService.upload(data.key, req.user);
-  }
-
-  @Post('download')
-  @UseGuards(AuthGuard)
-  async downloadObject(@Body() data: AWSConfigDto): Promise<any> {
-    return this.fileService.downloadObjects(data.key);
   }
 
   @Delete('delete')

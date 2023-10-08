@@ -25,7 +25,7 @@ export class FileService {
     });
   }
 
-  async getAllFiles(user: User): Promise<File[]> {
+  async getAllFiles(user: User): Promise<any> {
     try {
       let files: File[];
       if (user.role.roleName == roles.ADMIN)
@@ -35,7 +35,7 @@ export class FileService {
           where: { user: { id: user.id } },
         });
       if (files.length == 0) return [];
-      return files;
+      return this.getObjectsFromS3(files);
     } catch (error) {
       console.log(error);
       throw new Error(error);
@@ -65,15 +65,15 @@ export class FileService {
 
   async upload(key: string, user: User) {
     try {
-      let file = await this.filesRepository.findOne({
+      const file = await this.filesRepository.findOne({
         where: {
           name: key,
           user: { id: user.id },
         },
       });
-      let usr = await this.userService.getUser(user.id);
+      const usr = await this.userService.getUser(user.id);
       if (!file && usr) {
-        let newFile = new File();
+        const newFile = new File();
         newFile.name = key;
         newFile.user = usr;
         await this.filesRepository.save(newFile);
@@ -95,7 +95,7 @@ export class FileService {
         Key: objectKey,
       };
       await this.s3.deleteObject(params).promise();
-      let file = await this.filesRepository.findOne({
+      const file = await this.filesRepository.findOne({
         where: { name: objectKey, user: { id: userId } },
       });
       if (file) await this.filesRepository.delete(file.id);
@@ -105,12 +105,27 @@ export class FileService {
     }
   }
 
-  async downloadObjects(objectKey: string): Promise<any> {
-    const cloudFrontDomain = process.env.CLOUD_FRONT_ORIGIN;
-    const cloudFrontUrl = `${cloudFrontDomain}/${objectKey}`;
-    const response = await axios.get(cloudFrontUrl, {
-      responseType: 'arraybuffer',
-    });
-    return response.data;
+  async getObjectsFromS3(keys: File[]): Promise<any> {
+    try {
+      const cloudFrontDomain = process.env.CLOUD_FRONT_ORIGIN;
+      const response: any[] = [];
+      for (let i = 0; i < keys.length; i++) {
+        const cloudFrontUrl = `${cloudFrontDomain}/${keys[i].name}`;
+        await axios
+          .get(cloudFrontUrl, {
+            responseType: 'arraybuffer',
+          })
+          .then((obj) => {
+            response.push({
+              id: keys[i].id,
+              name: keys[i].name,
+              fileData: obj.data,
+            });
+          });
+      }
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
