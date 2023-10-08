@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FileService } from '../service/file.service';
 import { MatDialog } from '@angular/material/dialog';
+import { File } from '../interface/file.interface';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -10,12 +12,26 @@ import { MatDialog } from '@angular/material/dialog';
 export class HomeComponent {
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
   gridColumns = 5;
-  files = [];
+  files: File[] = [];
 
-  constructor(private fileService: FileService, private dialog: MatDialog) {
+  constructor(
+    private fileService: FileService,
+    private dialog: MatDialog,
+    private domSanitizer: DomSanitizer
+  ) {
     this.fileService.getFiles().subscribe(
-      (data) => {
+      (data: File[]) => {
         this.files = data;
+        this.files.forEach((file) => {
+          const arr = new Uint8Array(file.fileData.data);
+          const STRING_CHAR = arr.reduce((data, byte) => {
+            return data + String.fromCharCode(byte);
+          }, '');
+          let base64String = btoa(STRING_CHAR);
+          file.fileData.blob = this.domSanitizer.bypassSecurityTrustUrl(
+            `data:${file.fileData.type};base64, ` + base64String
+          );
+        });
       },
       (error) => {
         console.log(error);

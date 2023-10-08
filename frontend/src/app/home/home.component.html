@@ -27,16 +27,16 @@
     [fxFlex]="100 / gridColumns + '%'"
     fxFlex.xs="100%"
     fxFlex.sm="25%"
-    *ngFor="let num of [1, 2, 3, 4, 5, 6, 7]"
+    *ngFor="let file of files"
   >
-    <mat-card class="mat-elevation-z4">
+    <mat-card
+      class="mat-elevation-z4"
+      *ngIf="file.fileData.type != 'application/pdf'; else elseblock"
+    >
       <mat-card-header>
-        <mat-card-title>Card example {{ num }}</mat-card-title>
+        <mat-card-title>{{ file.name }}</mat-card-title>
       </mat-card-header>
-      <img
-        mat-card-image
-        src="https://material.angular.io/assets/img/examples/shiba2.jpg"
-      />
+      <img mat-card-image [src]="file.fileData.blob" />
       <mat-card-content>
         <p>Some text content</p>
       </mat-card-content>
@@ -45,5 +45,20 @@
         <button mat-button>SHARE</button>
       </mat-card-actions>
     </mat-card>
+    <ng-template #elseblock>
+      <mat-card class="mat-elevation-z4">
+        <mat-card-header>
+          <mat-card-title>{{ file.name }}</mat-card-title>
+        </mat-card-header>
+        <img mat-card-image src="/CMPE281_P1/frontend/src/assets/pdf.png" />
+        <mat-card-content>
+          <p>Some text content</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button>LIKE</button>
+          <button mat-button>SHARE</button>
+        </mat-card-actions>
+      </mat-card>
+    </ng-template>
   </div>
 </div>
