@@ -8,13 +8,17 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SignupComponent } from './signup/signup.component';
-import { HomeComponent } from './home/home.component';
+import {
+  DialogContentExampleDialog,
+  HomeComponent,
+} from './home/home.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -24,7 +28,13 @@ import { ToastrModule } from 'ngx-toastr';
 import { FileService } from './service/file.service';
 
 @NgModule({
-  declarations: [AppComponent, AuthComponent, SignupComponent, HomeComponent],
+  declarations: [
+    AppComponent,
+    AuthComponent,
+    SignupComponent,
+    HomeComponent,
+    DialogContentExampleDialog,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -34,6 +44,7 @@ import { FileService } from './service/file.service';
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
+    MatDialogModule,
     MatToolbarModule,
     FormsModule,
     MatTableModule,
