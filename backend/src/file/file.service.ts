@@ -61,7 +61,7 @@ export class FileService {
         if (err) {
           reject(err);
         } else {
-          resolve(url);
+          resolve(JSON.stringify(url));
         }
       });
     });
