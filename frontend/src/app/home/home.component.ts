@@ -10,7 +10,6 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent {
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
   gridColumns = 5;
   files: File[] = [];
 

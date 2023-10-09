@@ -31,18 +31,18 @@
   >
     <mat-card
       class="mat-elevation-z4"
-      *ngIf="file.fileData.type != 'application/pdf'; else elseblock"
+      *ngIf="file.fileType != 'application/pdf'; else elseblock"
     >
       <mat-card-header>
         <mat-card-title>{{ file.name }}</mat-card-title>
       </mat-card-header>
       <img mat-card-image [src]="file.fileData.blob" />
       <mat-card-content>
-        <p>Some text content</p>
+        <p>{{ file.desc }}</p>
       </mat-card-content>
       <mat-card-actions>
-        <button mat-button>LIKE</button>
-        <button mat-button>SHARE</button>
+        <button mat-button>Download</button>
+        <button mat-button>Edit</button>
       </mat-card-actions>
     </mat-card>
     <ng-template #elseblock>
@@ -50,13 +50,13 @@
         <mat-card-header>
           <mat-card-title>{{ file.name }}</mat-card-title>
         </mat-card-header>
-        <img mat-card-image src="/CMPE281_P1/frontend/src/assets/pdf.png" />
+        <img mat-card-image src="../../assets/pdf.png" />
         <mat-card-content>
-          <p>Some text content</p>
+          <p>{{ file.desc }}</p>
         </mat-card-content>
         <mat-card-actions>
-          <button mat-button>LIKE</button>
-          <button mat-button>SHARE</button>
+          <button mat-button>Download</button>
+          <button mat-button>Edit</button>
         </mat-card-actions>
       </mat-card>
     </ng-template>
