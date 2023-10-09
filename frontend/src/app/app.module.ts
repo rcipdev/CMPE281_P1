@@ -13,12 +13,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SignupComponent } from './signup/signup.component';
-import {
-  DialogContentExampleDialog,
-  HomeComponent,
-} from './home/home.component';
+import { HomeComponent } from './home/home.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -26,6 +24,7 @@ import { AuthService } from './service/auth.service';
 import { TokenInterceptor } from './interceptor/token.interceptor';
 import { ToastrModule } from 'ngx-toastr';
 import { FileService } from './service/file.service';
+import { FileDragNDropDirective } from './home/file-drag-ndrop.directive';
 
 @NgModule({
   declarations: [
@@ -33,7 +32,7 @@ import { FileService } from './service/file.service';
     AuthComponent,
     SignupComponent,
     HomeComponent,
-    DialogContentExampleDialog,
+    FileDragNDropDirective,
   ],
   imports: [
     BrowserModule,
@@ -46,6 +45,7 @@ import { FileService } from './service/file.service';
     MatIconModule,
     MatDialogModule,
     MatToolbarModule,
+    MatSnackBarModule,
     FormsModule,
     MatTableModule,
     ReactiveFormsModule,

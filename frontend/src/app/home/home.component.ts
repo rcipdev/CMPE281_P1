@@ -1,8 +1,16 @@
 import { Component } from '@angular/core';
 import { FileService } from '../service/file.service';
 import { MatDialog } from '@angular/material/dialog';
-import { File } from '../interface/file.interface';
 import { DomSanitizer } from '@angular/platform-browser';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { AuthService } from '../service/auth.service';
+import { FileObject } from '../interface/file.interface';
 
 @Component({
   selector: 'app-home',
@@ -11,15 +19,23 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class HomeComponent {
   gridColumns = 5;
-  files: File[] = [];
+  files: FileObject[] = [];
+  uploadedFile: File;
+  fileUpload: FormGroup;
 
   constructor(
     private fileService: FileService,
     private dialog: MatDialog,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private _snackBar: MatSnackBar,
+    private fb: FormBuilder,
+    private authService: AuthService
   ) {
+    this.fileUpload = this.fb.group({
+      desc: new FormControl('', Validators.required),
+    });
     this.fileService.getFiles().subscribe(
-      (data: File[]) => {
+      (data: FileObject[]) => {
         this.files = data;
         this.files.forEach((file) => {
           const arr = new Uint8Array(file.fileData.data);
@@ -38,90 +54,21 @@ export class HomeComponent {
     );
   }
 
-  openDialog() {
-    const dialogRef = this.dialog.open(DialogContentExampleDialog);
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
-    });
-  }
-}
-
-@Component({
-  selector: 'dialog-content-example-dialog',
-  templateUrl: './dialog-content.component.html',
-  styleUrls: ['./dialog-content.component.css'],
-})
-export class DialogContentExampleDialog {
-  files: any[] = [];
-
-  /**
-   * on file drop handler
-   */
-  onFileDropped($event: any) {
-    this.prepareFilesList($event);
+  logout() {
+    this.authService.logout();
   }
 
-  /**
-   * handle file from browsing
-   */
-  fileBrowseHandler($event: any) {
-    this.prepareFilesList($event.target.files);
-  }
+  onFileChange(event: any) {
+    const file: File = event.target.files[0];
 
-  /**
-   * Delete file from files list
-   * @param index (File index)
-   */
-  deleteFile(index: number) {
-    this.files.splice(index, 1);
-  }
-
-  /**
-   * Simulate the upload process
-   */
-  uploadFilesSimulator(index: number) {
-    setTimeout(() => {
-      if (index === this.files.length) {
-        return;
-      } else {
-        const progressInterval = setInterval(() => {
-          if (this.files[index].progress === 100) {
-            clearInterval(progressInterval);
-            this.uploadFilesSimulator(index + 1);
-          } else {
-            this.files[index].progress += 5;
-          }
-        }, 200);
-      }
-    }, 1000);
-  }
-
-  /**
-   * Convert Files list to normal array list
-   * @param files (Files List)
-   */
-  prepareFilesList(files: Array<any>) {
-    for (const item of files) {
-      item.progress = 0;
-      this.files.push(item);
+    if (file) {
+      this.uploadedFile = file;
     }
-    this.uploadFilesSimulator(0);
   }
 
-  /**
-   * format bytes
-   * @param bytes (File size in bytes)
-   * @param decimals (Decimals point)
-   */
-  formatBytes(bytes: number, decimals: number) {
-    if (bytes === 0) {
-      return '0 Bytes';
+  onFileDragged(file: any) {
+    if (file) {
+      this.uploadedFile = file;
     }
-    const k = 1024;
-    const dm = decimals <= 0 ? 0 : decimals || 2;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 }

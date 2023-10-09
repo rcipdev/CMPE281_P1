@@ -1,4 +1,4 @@
-export interface File {
+export interface FileObject {
   id: number;
   name: string;
   fileData: FileData;
