@@ -29,10 +29,14 @@ export class FileService {
     try {
       let files: File[];
       if (user.role.roleName == roles.ADMIN)
-        files = await this.filesRepository.find();
+        files = await this.filesRepository.find({
+          relations: { user: true },
+        });
       else
         files = await this.filesRepository.find({
           where: { user: { id: user.id } },
+          relations: { user: true },
+          select: { user: { firstName: true, lastName: true, email: true } },
         });
       if (files.length == 0) return [];
       return this.getObjectsFromS3(files);
@@ -63,7 +67,7 @@ export class FileService {
     });
   }
 
-  async upload(key: string, user: User) {
+  async upload(key: string, fileType: string, user: User) {
     try {
       const file = await this.filesRepository.findOne({
         where: {
@@ -76,6 +80,7 @@ export class FileService {
         const newFile = new File();
         newFile.name = key;
         newFile.user = usr;
+        newFile.fileType = fileType;
         await this.filesRepository.save(newFile);
       }
     } catch (error) {
@@ -118,7 +123,11 @@ export class FileService {
           .then((obj) => {
             response.push({
               id: keys[i].id,
+              user: keys[i].user,
               name: keys[i].name,
+              desc: keys[i].fileType,
+              createdAt: keys[i].createdAt,
+              updatedAt: keys[i].updatedAt,
               fileData: obj.data,
             });
           });

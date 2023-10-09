@@ -5,5 +5,8 @@ export class AWSConfigDto {
   bucketName: string;
 
   @IsNotEmpty()
+  fileType: string;
+
+  @IsNotEmpty()
   key: string;
 }
