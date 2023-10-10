@@ -29,4 +29,10 @@ export class FileService {
       desc,
     });
   }
+
+  deleteFile(key: string, bucketName: string): Observable<any> {
+    return this.http.delete(`http://localhost:3000/file/delete`, {
+      body: { key, bucketName },
+    });
+  }
 }

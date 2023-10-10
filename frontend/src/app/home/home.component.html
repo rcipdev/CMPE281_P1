@@ -117,7 +117,7 @@
       </mat-card-content>
       <mat-card-actions>
         <button mat-button>Download</button>
-        <button mat-button>Edit</button>
+        <button mat-button (click)="deleteFile(file.name)">Delete</button>
       </mat-card-actions>
     </mat-card>
     <ng-template #elseblock>
@@ -131,7 +131,7 @@
         </mat-card-content>
         <mat-card-actions>
           <button mat-button>Download</button>
-          <button mat-button>Edit</button>
+          <button mat-button (click)="deleteFile(file.name)">Delete</button>
         </mat-card-actions>
       </mat-card>
     </ng-template>

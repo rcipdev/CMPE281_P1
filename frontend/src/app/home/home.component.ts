@@ -75,30 +75,29 @@ export class HomeComponent {
 
   upload() {
     if (this.fileUpload.valid && this.uploadedFile) {
-      this.fileService
-        .generatePreSignedURL('cmpe281-rcip-p1', this.uploadedFile.name)
-        .subscribe(
-          (data: string) => {
-            this.putToS3(data, () => {
-              if (this.uploadedFile)
-                this.saveFile(
-                  this.uploadedFile.name,
-                  this.uploadedFile.type,
-                  this.fileUpload.controls['desc'].value,
-                  () => {
-                    this.getFiles(() => {
-                      console.log('successfully uploaded');
-                      this.fileUpload.reset();
-                      this.deleteSelected;
-                    });
-                  }
-                );
-            });
-          },
-          (error) => {
-            console.log(error);
-          }
-        );
+      let fname = Date.now().toString() + '_' + this.uploadedFile.name;
+      this.fileService.generatePreSignedURL('cmpe281-rcip-p1', fname).subscribe(
+        (data: string) => {
+          this.putToS3(data, () => {
+            if (this.uploadedFile)
+              this.saveFile(
+                fname,
+                this.uploadedFile.type,
+                this.fileUpload.controls['desc'].value,
+                () => {
+                  this.getFiles(() => {
+                    console.log('successfully uploaded');
+                    this.fileUpload.reset();
+                    this.deleteSelected;
+                  });
+                }
+              );
+          });
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
     }
   }
 
@@ -106,8 +105,25 @@ export class HomeComponent {
     let files = (<HTMLInputElement>document.getElementById('file')).value;
     if (files !== null) {
       (<HTMLInputElement>document.getElementById('file')).value = '';
-      console.log(this.uploadedFile);
       this.uploadedFile = null;
+    }
+  }
+
+  deleteFile(fname: string) {
+    let fileInd = this.files.findIndex((fil) => {
+      return fil.name == fname;
+    });
+    if (fileInd != -1) {
+      this.fileService
+        .deleteFile(this.files[fileInd].name, 'cmpe281-rcip-p1')
+        .subscribe(
+          () => {
+            this.getFiles(() => {});
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
     }
   }
 
