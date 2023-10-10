@@ -127,6 +127,7 @@ export class FileService {
               user: keys[i].user,
               name: keys[i].name,
               desc: keys[i].description,
+              cloudfronturl: cloudFrontUrl,
               fileType: keys[i].fileType,
               createdAt: keys[i].createdAt,
               updatedAt: keys[i].updatedAt,

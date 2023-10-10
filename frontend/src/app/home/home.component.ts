@@ -127,6 +127,15 @@ export class HomeComponent {
     }
   }
 
+  downloadFile(fname: string) {
+    let fileInd = this.files.findIndex((fil) => {
+      return fil.name == fname;
+    });
+    if (fileInd != -1) {
+      window.open(this.files[fileInd].cloudfronturl);
+    }
+  }
+
   putToS3(url: string, callback: any) {
     const formData = new FormData();
     if (this.uploadedFile) {

@@ -6,6 +6,7 @@ export interface FileObject {
   desc: string;
   fileType: string;
   updatedAt: string;
+  cloudfronturl: string;
   user: User;
 }
 
