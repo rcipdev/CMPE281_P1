@@ -16,7 +16,7 @@ export class File {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ nullable: false })
   description: string;
 
   @Column()

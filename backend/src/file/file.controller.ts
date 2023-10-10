@@ -34,7 +34,12 @@ export class FileController {
   @Post('save')
   @UseGuards(AuthGuard)
   async uploadObject(@Body() data: AWSConfigDto, @Request() req) {
-    return this.fileService.upload(data.key, data.fileType, req.user);
+    return this.fileService.upload(
+      data.key,
+      data.fileType,
+      data.desc,
+      req.user,
+    );
   }
 
   @Delete('delete')

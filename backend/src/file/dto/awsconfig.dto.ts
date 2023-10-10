@@ -8,5 +8,8 @@ export class AWSConfigDto {
   fileType: string;
 
   @IsNotEmpty()
+  desc: string;
+
+  @IsNotEmpty()
   key: string;
 }

@@ -67,7 +67,7 @@ export class FileService {
     });
   }
 
-  async upload(key: string, fileType: string, user: User) {
+  async upload(key: string, fileType: string, desc: string, user: User) {
     try {
       const file = await this.filesRepository.findOne({
         where: {
@@ -80,6 +80,7 @@ export class FileService {
         const newFile = new File();
         newFile.name = key;
         newFile.user = usr;
+        newFile.description = desc;
         newFile.fileType = fileType;
         await this.filesRepository.save(newFile);
       }
