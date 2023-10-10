@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { FileService } from '../service/file.service';
-import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   FormBuilder,
   FormControl,
@@ -20,14 +18,12 @@ import { FileObject } from '../interface/file.interface';
 export class HomeComponent {
   gridColumns = 5;
   files: FileObject[] = [];
-  uploadedFile: File;
+  uploadedFile: File | null;
   fileUpload: FormGroup;
 
   constructor(
     private fileService: FileService,
-    private dialog: MatDialog,
     private domSanitizer: DomSanitizer,
-    private _snackBar: MatSnackBar,
     private fb: FormBuilder,
     private authService: AuthService
   ) {
@@ -84,16 +80,19 @@ export class HomeComponent {
         .subscribe(
           (data: string) => {
             this.putToS3(data, () => {
-              this.saveFile(
-                this.uploadedFile.name,
-                this.uploadedFile.type,
-                this.fileUpload.controls['desc'].value,
-                () => {
-                  this.getFiles(() => {
-                    console.log('successfully uploaded');
-                  });
-                }
-              );
+              if (this.uploadedFile)
+                this.saveFile(
+                  this.uploadedFile.name,
+                  this.uploadedFile.type,
+                  this.fileUpload.controls['desc'].value,
+                  () => {
+                    this.getFiles(() => {
+                      console.log('successfully uploaded');
+                      this.fileUpload.reset();
+                      this.deleteSelected;
+                    });
+                  }
+                );
             });
           },
           (error) => {
@@ -103,18 +102,29 @@ export class HomeComponent {
     }
   }
 
+  deleteSelected() {
+    let files = (<HTMLInputElement>document.getElementById('file')).value;
+    if (files !== null) {
+      (<HTMLInputElement>document.getElementById('file')).value = '';
+      console.log(this.uploadedFile);
+      this.uploadedFile = null;
+    }
+  }
+
   putToS3(url: string, callback: any) {
     const formData = new FormData();
-    formData.append('file', this.uploadedFile);
-    this.fileService.putToS3(url, formData).subscribe(
-      (data) => {
-        callback();
-      },
-      (error) => {
-        console.log(error);
-        throw Error(error);
-      }
-    );
+    if (this.uploadedFile) {
+      formData.append('file', this.uploadedFile);
+      this.fileService.putToS3(url, formData).subscribe(
+        (data) => {
+          callback();
+        },
+        (error) => {
+          console.log(error);
+          throw Error(error);
+        }
+      );
+    }
   }
 
   saveFile(fileName: string, fileType: string, desc: string, callback: any) {

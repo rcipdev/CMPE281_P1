@@ -62,6 +62,7 @@
             <div
               *ngIf="uploadedFile != null || uploadedFile != undefined"
               class="delete"
+              (click)="deleteSelected()"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
