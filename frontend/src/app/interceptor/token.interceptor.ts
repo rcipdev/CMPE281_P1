@@ -18,14 +18,17 @@ export class TokenInterceptor implements HttpInterceptor {
     let token = this.auth.getToken();
     if (!token) this.auth.logout();
     if (
-      request.url.indexOf('signup') != 0 ||
-      request.url.indexOf('signin') != 0
-    )
+      request.headers.get('signup') ||
+      request.url.indexOf('cmpe281-rcip-p1') > 0 ||
+      request.headers.get('signin')
+    ) {
+    } else {
       request = request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,
         },
       });
+    }
     return next.handle(request);
   }
 }

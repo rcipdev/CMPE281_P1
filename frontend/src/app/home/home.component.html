@@ -51,12 +51,8 @@
       &nbsp;
       <div>
         <mat-form-field class="desc">
-          <mat-label>Desc</mat-label>
-          <textarea
-            matInput
-            formControlName="desc"
-            placeholder="Ex. 100 Main St"
-          ></textarea>
+          <mat-label>File Description</mat-label>
+          <textarea matInput formControlName="desc"></textarea>
         </mat-form-field>
         <div style="width: 10%; float: right; align-self: center">
           <div>
@@ -82,7 +78,17 @@
             </div>
           </div>
 
-          <button mat-raised-button>Upload</button>
+          <button
+            mat-raised-button
+            [disabled]="
+              !fileUpload.valid ||
+              uploadedFile == null ||
+              uploadedFile == undefined
+            "
+            (click)="upload()"
+          >
+            Upload
+          </button>
         </div>
       </div>
     </form>

@@ -10,4 +10,23 @@ export class FileService {
   getFiles(): Observable<any> {
     return this.http.get(`http://localhost:3000/file`);
   }
+
+  generatePreSignedURL(bucketName: string, key: string): Observable<any> {
+    return this.http.post(`http://localhost:3000/file/url`, {
+      bucketName,
+      key,
+    });
+  }
+
+  putToS3(url: string, formData: FormData): Observable<any> {
+    return this.http.put(url, formData);
+  }
+
+  saveFile(key: string, fileType: string, desc: string): Observable<any> {
+    return this.http.post(`http://localhost:3000/file/save`, {
+      key,
+      fileType,
+      desc,
+    });
+  }
 }

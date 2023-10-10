@@ -34,24 +34,7 @@ export class HomeComponent {
     this.fileUpload = this.fb.group({
       desc: new FormControl('', Validators.required),
     });
-    this.fileService.getFiles().subscribe(
-      (data: FileObject[]) => {
-        this.files = data;
-        this.files.forEach((file) => {
-          const arr = new Uint8Array(file.fileData.data);
-          const STRING_CHAR = arr.reduce((data, byte) => {
-            return data + String.fromCharCode(byte);
-          }, '');
-          let base64String = btoa(STRING_CHAR);
-          file.fileData.blob = this.domSanitizer.bypassSecurityTrustUrl(
-            `data:${file.fileData.type};base64, ` + base64String
-          );
-        });
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.getFiles(() => {});
   }
 
   logout() {
@@ -70,5 +53,83 @@ export class HomeComponent {
     if (file) {
       this.uploadedFile = file;
     }
+  }
+
+  getFiles(callback: any) {
+    this.fileService.getFiles().subscribe(
+      (data: FileObject[]) => {
+        this.files = data;
+        this.files.forEach((file) => {
+          const arr = new Uint8Array(file.fileData.data);
+          const STRING_CHAR = arr.reduce((data, byte) => {
+            return data + String.fromCharCode(byte);
+          }, '');
+          let base64String = btoa(STRING_CHAR);
+          file.fileData.blob = this.domSanitizer.bypassSecurityTrustUrl(
+            `data:${file.fileData.type};base64, ` + base64String
+          );
+        });
+        callback();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  upload() {
+    if (this.fileUpload.valid && this.uploadedFile) {
+      this.fileService
+        .generatePreSignedURL('cmpe281-rcip-p1', this.uploadedFile.name)
+        .subscribe(
+          (data: string) => {
+            this.putToS3(data, () => {
+              this.saveFile(
+                this.uploadedFile.name,
+                this.uploadedFile.type,
+                this.fileUpload.controls['desc'].value,
+                () => {
+                  this.getFiles(() => {
+                    console.log('successfully uploaded');
+                  });
+                }
+              );
+            });
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+    }
+  }
+
+  putToS3(url: string, callback: any) {
+    const formData = new FormData();
+    formData.append('file', this.uploadedFile);
+    this.fileService.putToS3(url, formData).subscribe(
+      (data) => {
+        callback();
+      },
+      (error) => {
+        console.log(error);
+        throw Error(error);
+      }
+    );
+  }
+
+  saveFile(fileName: string, fileType: string, desc: string, callback: any) {
+    this.fileService.saveFile(fileName, fileType, desc).subscribe(
+      (data) => {
+        callback();
+      },
+      (error) => {
+        console.log(error);
+        throw Error(error);
+      }
+    );
+  }
+
+  rollback() {
+    //
   }
 }
