@@ -8,6 +8,7 @@ export interface FileObject {
   updatedAt: string;
   cloudfronturl: string;
   user: User;
+  oname: string;
 }
 
 export interface FileData {

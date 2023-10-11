@@ -56,14 +56,7 @@ export class HomeComponent {
       (data: FileObject[]) => {
         this.files = data;
         this.files.forEach((file) => {
-          const arr = new Uint8Array(file.fileData.data);
-          const STRING_CHAR = arr.reduce((data, byte) => {
-            return data + String.fromCharCode(byte);
-          }, '');
-          let base64String = btoa(STRING_CHAR);
-          file.fileData.blob = this.domSanitizer.bypassSecurityTrustUrl(
-            `data:${file.fileData.type};base64, ` + base64String
-          );
+          file.oname = file.name.substring(14);
         });
         callback();
       },
@@ -137,10 +130,8 @@ export class HomeComponent {
   }
 
   putToS3(url: string, callback: any) {
-    const formData = new FormData();
     if (this.uploadedFile) {
-      formData.append('file', this.uploadedFile);
-      this.fileService.putToS3(url, formData).subscribe(
+      this.fileService.putToS3(url, this.uploadedFile).subscribe(
         (data) => {
           callback();
         },

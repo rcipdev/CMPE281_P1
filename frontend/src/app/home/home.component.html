@@ -109,9 +109,9 @@
       *ngIf="file.fileType != 'application/pdf'; else elseblock"
     >
       <mat-card-header>
-        <mat-card-title>{{ file.name }}</mat-card-title>
+        <mat-card-title>{{ file.oname }}</mat-card-title>
       </mat-card-header>
-      <img mat-card-image [src]="file.fileData.blob" />
+      <img mat-card-image [src]="file.cloudfronturl" />
       <mat-card-content>
         <p>{{ file.desc }}</p>
       </mat-card-content>
@@ -123,9 +123,12 @@
     <ng-template #elseblock>
       <mat-card class="mat-elevation-z4">
         <mat-card-header>
-          <mat-card-title>{{ file.name }}</mat-card-title>
+          <mat-card-title>{{ file.oname }}</mat-card-title>
         </mat-card-header>
-        <img mat-card-image src="../../assets/pdf.png" />
+        <img
+          mat-card-image
+          src="https://d6zb7k42sq0g0.cloudfront.net/pdfimg.png"
+        />
         <mat-card-content>
           <p>{{ file.desc }}</p>
         </mat-card-content>

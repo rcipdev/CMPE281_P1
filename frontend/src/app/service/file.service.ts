@@ -18,8 +18,8 @@ export class FileService {
     });
   }
 
-  putToS3(url: string, formData: FormData): Observable<any> {
-    return this.http.put(url, formData);
+  putToS3(url: string, file: any): Observable<any> {
+    return this.http.put(url, file);
   }
 
   saveFile(key: string, fileType: string, desc: string): Observable<any> {
