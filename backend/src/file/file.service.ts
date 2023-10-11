@@ -119,7 +119,7 @@ export class FileService {
         const cloudFrontUrl = `${cloudFrontDomain}/${keys[i].name}`;
         await axios
           .get(cloudFrontUrl, {
-            responseType: 'arraybuffer',
+            responseType: 'blob',
           })
           .then((obj) => {
             response.push({
