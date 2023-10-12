@@ -35,5 +35,8 @@ import { File } from './database/enitities/file.entity';
   providers: [AppService],
 })
 export class AppModule {
-  constructor() {}
+  constructor() {
+    console.log(process.env.DB_HOST);
+    console.log(process.env.DB_NAME);
+  }
 }
