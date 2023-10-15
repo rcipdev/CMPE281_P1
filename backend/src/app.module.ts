@@ -9,6 +9,7 @@ import { FileModule } from './file/file.module';
 import { User } from './database/enitities/user.entity';
 import { Role } from './database/enitities/role.entity';
 import { File } from './database/enitities/file.entity';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { File } from './database/enitities/file.entity';
     }),
     AuthModule,
     FileModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
