@@ -23,6 +23,7 @@ import { HealthModule } from './health/health.module';
       database: process.env.DB_NAME,
       entities: [User, Role, File],
       synchronize: true,
+      ssl: true,
     }),
     JwtModule.register({
       global: true,
