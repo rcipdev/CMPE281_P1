@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { cred } from '../environment/dev.envvironment';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +13,7 @@ export class AuthService {
       email: credentials.email,
       password: credentials.password,
     };
-    return this.http.post(`http://localhost:3000/auth/signin`, user);
+    return this.http.post(`${cred.backendURL}auth/signin`, user);
   }
 
   signup(credentials: any): Observable<any> {
@@ -22,7 +23,7 @@ export class AuthService {
       firstName: credentials.fname,
       lastName: credentials.lname,
     };
-    return this.http.post(`http://localhost:3000/auth/signup`, { ...user });
+    return this.http.post(`${cred.backendURL}auth/signup`, { ...user });
   }
 
   logout(): void {
@@ -47,10 +48,4 @@ export class AuthService {
     const expiry = JSON.parse(atob(token.split('.')[1])).exp;
     return Math.floor(new Date().getTime() / 1000) < expiry;
   }
-
-  //   hasRole(role: string): boolean {
-  //     const token: any = this.getToken();
-  //     const roleClaim = decode(token).role;
-  //     return roleClaim === role;
-  //   }
 }

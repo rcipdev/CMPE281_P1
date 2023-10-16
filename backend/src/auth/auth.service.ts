@@ -29,11 +29,11 @@ export class AuthService {
   }
   async signIn(data: SignInDto) {
     try {
-      let { email, password } = data;
+      const { email, password } = data;
       if (!email || !password) {
         throw new BadRequestException('Please provide email and password');
       }
-      let user = await this.usersRepository.findOne({
+      const user = await this.usersRepository.findOne({
         where: { email },
         relations: { role: true },
       });
@@ -52,19 +52,19 @@ export class AuthService {
 
   async signUp(data: SignUpDto) {
     try {
-      let { email, password, firstName, lastName } = data;
+      const { email, password, firstName, lastName } = data;
       if (!email || !password || !firstName || !lastName) {
         throw new BadRequestException(
           'Please provide firstName, lastName, email and password',
         );
       }
-      let user = await this.usersRepository.findOne({ where: { email } });
-      let role = await this.rolesRepository.findOne({
+      const user = await this.usersRepository.findOne({ where: { email } });
+      const role = await this.rolesRepository.findOne({
         where: { roleName: roles.USER },
       });
       if (user) throw new ConflictException('User Found, please sign in');
       if (!role) throw new ConflictException('Role Not Found');
-      let newUser = new User();
+      const newUser = new User();
       newUser.email = email;
       newUser.firstName = firstName;
       newUser.lastName = lastName;
@@ -82,7 +82,7 @@ export class AuthService {
 
   async getUser(id: number): Promise<User> {
     try {
-      let user = await this.usersRepository.findOne({ where: { id } });
+      const user = await this.usersRepository.findOne({ where: { id } });
       if (!user) return null;
       return user;
     } catch (error) {
